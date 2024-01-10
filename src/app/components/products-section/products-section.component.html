@@ -1,0 +1,7 @@
+<section *ngFor="let product of products" class="products__section">
+  <a [routerLink]="['/category', product]" class="link">
+    <span class="title">{{ updateTitle(product) }}</span>
+    {{ click }}
+  </a>
+  <app-products class="grid" [products]="getTenProducts(product)"></app-products>
+</section>

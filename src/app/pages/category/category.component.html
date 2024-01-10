@@ -1,0 +1,9 @@
+<ng-container *ngIf="productType$">
+  <app-filters
+    [products]="products"
+    [brands]="brands"
+    (filtersApplied)="setFilteredProducts($event)"
+  ></app-filters>
+      <h2 class="title">{{ updateTitle(productType$) }}</h2>
+  <app-products class="grid" [products]="filteredProducts"></app-products>
+</ng-container>
