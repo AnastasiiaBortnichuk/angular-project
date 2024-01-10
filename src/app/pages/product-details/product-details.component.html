@@ -1,0 +1,50 @@
+<ng-container *ngIf="product$ | async as product">
+  <p class="product_name">{{ product?.name }}</p>
+  <div class="container">
+    <div class="container_box">
+      <img
+        [src]="'http:' + product.api_featured_image"
+        width="320"
+        height="320"
+        class="image"
+        id="test-image"
+      />
+      <p class="text">
+        Price: {{ product.price | currency }}
+      </p>
+      <!-- <Buttons /> -->
+      <div class="button">
+        <button
+          type="submit"
+          [ngClass]="isAddedToCart ? 'button_buy__active' : 'button_buy'"
+          (click)="handleAddToCart(product)"
+        >
+          {{ buttonTitle }}
+        </button>
+        <button
+          type="submit"
+          class="button_like"
+          (click)="handleSetFavorites(product)"
+        >
+          <img [src]="heartIcon" alt="heart icon" />
+        </button>
+      </div>
+    </div>
+    <div class="container_box">
+      <p class="brand_title">Brand: {{ product.brand }}</p>
+      <p class="text">{{ product.description }}</p>
+      <p class="text">Star rating:{{ product.rating || ' unrated'}} </p>
+    </div>
+  </div>
+  <!-- <Colors /> -->
+  <ul class="colors_detailed" *ngIf="product.product_colors">
+    <li *ngFor="let color of product.product_colors"
+      class="colors_box"
+      [id]="color.hex_value"
+    >
+      <!-- in-line style is using because hex value comes from API -->
+      <div class="color_rectangle" [ngStyle]="{ 'background': color.hex_value }"></div>
+      <div class="text">{{ color.colour_name }}</div>
+    </li>
+  </ul>
+</ng-container>

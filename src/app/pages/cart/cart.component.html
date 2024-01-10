@@ -1,0 +1,38 @@
+<div class="cart_container">
+  <h2 class="title">{{ title }}</h2>
+
+    <div *ngFor="let product of cart" class="product">
+      <img
+        [src]="'http:' + product.api_featured_image"
+        width="210"
+        height="210"
+        alt="product.name"
+        class="image"
+      />
+      <p class="details">{{ product.brand }}</p>
+      <p class="details">{{ product.name }}</p>
+      <p class="details">{{ product.price }}</p>
+      <button
+        type="submit"
+        class="delete_button"
+        (click)="handleDelete(product)"
+      >
+        <img
+          src="assets/delete.png"
+          alt="delete button"
+          title="remove from cart"
+        />
+      </button>
+    </div>
+
+  <p class="total">Total: {{ count }}</p>
+  <button
+    type="submit"
+    class="checkout_button"
+    (click)="handleClick()"
+    [disabled]="count === 0"
+  >
+    Checkout
+  </button>
+  <app-purchase-popup *ngIf="isPopupShown" (closePopup)="handleClosePopup()"></app-purchase-popup>
+</div>

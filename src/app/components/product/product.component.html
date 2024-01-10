@@ -1,0 +1,41 @@
+<div class="products">
+    <a class="products__container" [routerLink]="'/product/' + product.id">
+      <img
+        [src]="'http:' + product.api_featured_image"
+        width="210"
+        height="210"
+        class="image"
+        id="test-image"
+      />
+      <p class="brand_name">{{ product.brand }}</p>
+      <p>{{ product.name }}</p>
+      <p>
+        {{ product.price | currency }}
+      </p>
+      <!-- <Colors /> -->
+      <ul class="colors" *ngIf="product.product_colors">
+        <li *ngFor="let color of product.product_colors.slice(0, 30)"
+          class="color_circle"
+          [ngStyle]="{ 'background': color.hex_value }"
+          [id]="color.hex_value"
+        ></li>
+      </ul>
+    </a>
+    <!-- <Buttons /> -->
+    <div class="button">
+      <button
+        type="submit"
+        [ngClass]="isAddedToCart ? 'button_buy__active' : 'button_buy'"
+        (click)="handleAddToCart(product)"
+      >
+        {{ buttonTitle }}
+      </button>
+      <button
+        type="submit"
+        class="button_like"
+        (click)="handleSetFavorites(product)"
+      >
+        <img [src]="heartIcon" alt="heart icon" />
+      </button>
+    </div>
+</div>
