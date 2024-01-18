@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { IProduct } from '@shared/types';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class CartService {
   private cartSubject = new BehaviorSubject<IProduct[]>([]);
   cart$: Observable<IProduct[]> = this.cartSubject.asObservable();

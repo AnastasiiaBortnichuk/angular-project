@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { IProduct } from '@shared/types';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class FavoritesService {
   private favoritesSubject = new BehaviorSubject<IProduct[]>([]);
   favorites$: Observable<IProduct[]> = this.favoritesSubject.asObservable();

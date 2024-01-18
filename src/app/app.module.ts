@@ -22,6 +22,8 @@ import { PurchasePopupComponent } from '@app-components/purchase-popup/purchase-
 import { FiltersComponent } from '@app-components/filters/filters.component';
 import { CatalogComponent } from '@app-pages/catalog/catalog.component';
 import { CategoryComponent } from './pages/category/category.component';
+import { ButtonsComponent } from './components/buttons/buttons.component';
+import { ProductsService } from '@app-services/products.service';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,8 @@ import { CategoryComponent } from './pages/category/category.component';
     PurchasePopupComponent,
     FiltersComponent,
     CatalogComponent,
-    CategoryComponent
+    CategoryComponent,
+    ButtonsComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +64,7 @@ import { CategoryComponent } from './pages/category/category.component';
       { path: 'catalog', component: CatalogComponent },
     ])
   ],
-  providers: [CartService, FavoritesService],
+  providers: [CartService, FavoritesService, ProductsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
