@@ -16,9 +16,9 @@ export class ProductsService {
   }
 
   fetchData(param: string): Observable<IProduct[]> {
-    const params = new HttpParams().set('product_type', `${param}`);
+    const params = new HttpParams().set('product_type', param);
 
-    return this.http.get<IProduct[]>(`${env.BASE_JSON_URL}`, { params })
+    return this.http.get<IProduct[]>(env.BASE_JSON_URL, { params })
   };
 
   getProductDetails(productId: number): Observable<IProduct> {

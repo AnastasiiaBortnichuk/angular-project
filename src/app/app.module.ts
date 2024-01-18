@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from '@app-components/header/header.component';
@@ -24,6 +23,7 @@ import { CatalogComponent } from '@app-pages/catalog/catalog.component';
 import { CategoryComponent } from './pages/category/category.component';
 import { ButtonsComponent } from './components/buttons/buttons.component';
 import { ProductsService } from '@app-services/products.service';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -50,19 +50,7 @@ import { ProductsService } from '@app-services/products.service';
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent },
-      { path: 'eyes', component: EyesComponent},
-      { path: 'face', component: FaceComponent },
-      { path: 'lips', component: LipsComponent },
-      { path: 'brows', component: BrowsComponent },
-      { path: 'nails', component: NailsComponent },
-      { path: 'product/:productId', component: ProductDetailsComponent },
-      { path: 'category/:productType', component: CategoryComponent },
-      { path: 'cart', component: CartComponent },
-      { path: 'favorites', component: FavoritesComponent },
-      { path: 'catalog', component: CatalogComponent },
-    ])
+    AppRoutingModule
   ],
   providers: [CartService, FavoritesService, ProductsService],
   bootstrap: [AppComponent]
