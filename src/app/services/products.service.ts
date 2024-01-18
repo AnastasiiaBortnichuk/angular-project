@@ -1,12 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IProduct } from '@shared/types';
 import { environment as env } from './../../environments/environment.development';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ProductsService {
 
   constructor(
@@ -18,7 +16,9 @@ export class ProductsService {
   }
 
   fetchData(param: string): Observable<IProduct[]> {
-    return this.http.get<IProduct[]>(`${env.BASE_JSON_URL}${env.URL_SEARCH}${param}`)
+    const params = new HttpParams().set('product_type', `${param}`);
+
+    return this.http.get<IProduct[]>(`${env.BASE_JSON_URL}`, { params })
   };
 
   getProductDetails(productId: number): Observable<IProduct> {

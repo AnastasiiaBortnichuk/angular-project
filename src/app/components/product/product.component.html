@@ -22,20 +22,5 @@
       </ul>
     </a>
     <!-- <Buttons /> -->
-    <div class="button">
-      <button
-        type="submit"
-        [ngClass]="isAddedToCart ? 'button_buy__active' : 'button_buy'"
-        (click)="handleAddToCart(product)"
-      >
-        {{ buttonTitle }}
-      </button>
-      <button
-        type="submit"
-        class="button_like"
-        (click)="handleSetFavorites(product)"
-      >
-        <img [src]="heartIcon" alt="heart icon" />
-      </button>
-    </div>
+    <app-buttons [product]="product"></app-buttons>
 </div>
