@@ -1,0 +1,17 @@
+<div class="popup" (click)="closePopup.emit()" role="button" tabindex="0">
+  <div
+    class="popup-content"
+    (click)="stopPropagation($event)"
+    (keydown.escape)="handleKeyPress()"
+    role="button"
+    tabindex="0"
+  >
+    <p>{{ text }}</p>
+    <img
+      src="/assets/images/thankYou.png"
+      alt="Thank You"
+      width="200"
+      height="200"
+    />
+  </div>
+</div>

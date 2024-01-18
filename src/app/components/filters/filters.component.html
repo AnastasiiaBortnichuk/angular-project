@@ -1,0 +1,19 @@
+<div class="filter">
+  <div class="filter-group">
+    <p class="selection">Sort by</p>
+    <select class="options" (change)="changeBrand($event)">
+      <option value="all">choose brand</option>
+      <option *ngFor="let brand of brands" [value]="brand" [id]="brand">{{ brand }}</option>
+    </select>
+    <select class="options" (change)="changePriceRate($event)">
+      <option value="all">{{ priceSorting }}</option>
+      <option value="desc">{{ priceHigh }}</option>
+      <option value="asc">{{ priceLow }}</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <div class="search">
+      <input class="search-input" type="search" [value]="query" placeholder="Search by name" (input)="changeQuery($event)" />
+    </div>
+  </div>
+</div>

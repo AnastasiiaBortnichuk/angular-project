@@ -1,0 +1,16 @@
+<div class="button">
+  <button
+    type="submit"
+    [ngClass]="submitBtnClass"
+    (click)="handleAddToCart(product)"
+  >
+    {{ buttonTitle }}
+  </button>
+  <button
+    type="submit"
+    class="button_like"
+    (click)="handleSetFavorites(product)"
+  >
+    <img [src]="heartIcon" alt="heart icon" />
+  </button>
+</div>

@@ -1,0 +1,12 @@
+<header class="headerContainer">
+    <a href="/" id="test-icon">
+      <img src="/assets/favicon.ico" width="50" height="50" />
+    </a>
+  <nav class="nav">
+    <a *ngFor="let item of menuItems" [title]="item" class="link"  [routerLink]="'/' + item" data-testid="link">
+      {{ item }}
+    </a>
+  </nav>
+  <!-- <LoginForm />
+  <RegisterForm /> -->
+</header>

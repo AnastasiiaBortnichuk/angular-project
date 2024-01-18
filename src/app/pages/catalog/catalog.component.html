@@ -1,0 +1,11 @@
+<ng-container>
+  <app-filters
+    [products]="products"
+    [brands]="brands"
+    (filtersApplied)="setFilteredProducts($event)"
+  ></app-filters>
+      <h2 class="title" data-testid="all-products">
+        All our products
+      </h2>
+  <app-products class="grid" [products]="filteredProducts"></app-products>
+</ng-container>

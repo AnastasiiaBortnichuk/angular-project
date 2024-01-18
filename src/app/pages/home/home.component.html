@@ -1,0 +1,19 @@
+<main class="main">
+  <h1 class="title">Makeup</h1>
+  <div class="grid">
+      <a *ngFor="let category of categories" [class]="category" [title]="category" [routerLink]="'/' + category">
+        <img
+          [src]="'/assets/images/' + category + '.png'"
+          width="370"
+          [ngStyle]="{ 'height.px': category === 'lips' ? 510 : 248 }"
+          [alt]="category"
+          [title]="category"
+        />
+      </a>
+  </div>
+  <div>
+    <a *ngFor="let type of types" class="link" [routerLink]="'/category/' + type">
+      {{ updateTitle(type) }}
+    </a>
+  </div>
+</main>
