@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '@app-services/products.service';
 import { IProduct } from '@shared/types';
+import { fetchProductProps } from 'src/app/utils/product-utils';
+
+const NAIL_PRODUCT = 'nail_polish';
 
 @Component({
   selector: 'app-nails',
@@ -15,9 +18,14 @@ export class NailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.productsService.fetchData('nail_polish')
-    .subscribe(result => {
-        this.products = result;
+    fetchProductProps([NAIL_PRODUCT], this.productsService)
+    .subscribe({
+      next: productProps => {
+        this.products = productProps[NAIL_PRODUCT];
+      },
+      error: err => {
+        console.error('Error fetching product props:', err);
+      }
     });
   }
 }

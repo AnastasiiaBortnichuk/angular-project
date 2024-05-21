@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { forkJoin, from } from 'rxjs';
 import { ProductsService } from '@app-services/products.service';
 import { IProduct, ProductTypes } from '@shared/types';
+import { fetchProductProps } from 'src/app/utils/product-utils';
 
 const LIPS_PRODUCTS = ['lipstick', 'lip_liner'];
 //'lip_liner' variable has a name with underscore because it must match
@@ -20,15 +20,14 @@ export class LipsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    forkJoin(
-      this.products.map(product =>
-        from(this.productsService.fetchData(product))
-      )
-    ).subscribe(results => {
-      results.forEach((products, index) => {
-        const productType = this.products[index] as ProductTypes;;
-        this.productProps[productType] = products;
+    fetchProductProps(this.products, this.productsService)
+      .subscribe({
+        next: productProps => {
+          this.productProps = productProps as Record<ProductTypes, IProduct[]>;
+        },
+        error: err => {
+          console.error('Error fetching product props:', err);
+        }
       });
-    })
   }
 }
