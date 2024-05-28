@@ -11,6 +11,8 @@ import { HomeComponent } from "@app-pages/home/home.component";
 import { LipsComponent } from "@app-pages/lips/lips.component";
 import { NailsComponent } from "@app-pages/nails/nails.component";
 import { ProductDetailsComponent } from "@app-pages/product-details/product-details.component";
+import { ProductsTableComponent } from "@app-pages/products-table/products-table.component";
+import { UsersTableComponent } from '@app-pages/users-table/users-table.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,6 +26,8 @@ const routes: Routes = [
   { path: 'cart', component: CartComponent },
   { path: 'favorites', component: FavoritesComponent },
   { path: 'catalog', component: CatalogComponent },
+  { path: 'products', component: ProductsTableComponent },
+  { path: 'users', component: UsersTableComponent }
 ];
 
 @NgModule({

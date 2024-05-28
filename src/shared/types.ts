@@ -33,3 +33,22 @@ export type ProductTypes =
   | 'nail_polish';
 
 export type PriceRate = typeof ALL | typeof ASC | typeof DESC;
+
+export interface IAddress {
+  street: string;
+  city: string;
+  zip: string;
+}
+
+export interface IUser {
+  id: number;
+  name: string;
+  age: number;
+  username: string;
+  email: string;
+  address: IAddress;
+  phone: string;
+  website: string;
+  occupation: string;
+  hobbies: string[];
+}

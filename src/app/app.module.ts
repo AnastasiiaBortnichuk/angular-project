@@ -24,6 +24,19 @@ import { CategoryComponent } from './pages/category/category.component';
 import { ButtonsComponent } from './components/buttons/buttons.component';
 import { ProductsService } from '@app-services/products.service';
 import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CustomTableComponent } from './custom-table/custom-table.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { ProductsTableComponent } from './pages/products-table/products-table.component';
+import { UsersTableComponent } from './pages/users-table/users-table.component';
+import { AddressFormatterPipe } from './address-formatter.pipe';
+
 
 @NgModule({
   declarations: [
@@ -45,12 +58,24 @@ import { AppRoutingModule } from './app-routing.module';
     FiltersComponent,
     CatalogComponent,
     CategoryComponent,
-    ButtonsComponent
+    ButtonsComponent,
+    CustomTableComponent,
+    ProductsTableComponent,
+    UsersTableComponent,
+    AddressFormatterPipe
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatButtonModule,
+    InfiniteScrollModule
   ],
   providers: [CartService, FavoritesService, ProductsService],
   bootstrap: [AppComponent]

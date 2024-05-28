@@ -44,4 +44,6 @@ export const MENU_ITEMS = [
   'nails',
   'cart',
   'favorites',
+  'products',
+  'users'
 ];

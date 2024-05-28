@@ -1,0 +1,29 @@
+<div class="table-container" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="300" (scrolled)="onScroll()">
+  <mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <ng-container *ngIf="column !== 'image' && column !== 'address' && !customCellTemplates[column]">{{element[column]}}</ng-container>
+        <ng-container *ngIf="column === 'address' && !customCellTemplates[column]">{{element[column] | addressFormatter}}</ng-container>
+        <ng-container *ngIf="column === 'image'">
+          <img [src]="element[column]" alt="Product Image" width="50">
+        </ng-container>
+        <ng-container *ngIf="customCellTemplates[column]">
+          <ng-template [ngTemplateOutlet]="customCellTemplates[column]" [ngTemplateOutletContext]="{ $implicit: element }"></ng-template>
+        </ng-container>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator *ngIf="tableConfig.pagination" [length]="tableConfig.totalItems" [pageSize]="tableConfig.pageSize" [pageIndex]="currentPage" (page)="onPageChange($event)"></mat-paginator>
+</div>
+
+<div class="action-bar">
+  <button *ngIf="tableConfig.actionButtons.includes('delete')" (click)="deleteSelected()">Delete</button>
+  <button *ngIf="tableConfig.actionButtons.includes('update')" (click)="updateSelected()">Update</button>
+</div>
+
