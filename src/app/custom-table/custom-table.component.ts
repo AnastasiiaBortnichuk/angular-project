@@ -22,6 +22,7 @@ export class CustomTableComponent implements OnInit, OnChanges {
   dataSource = new MatTableDataSource<any>(this.data);
   selection = new SelectionModel<any>(true, []);
   currentPage = 0;
+  private allData: any[] = [];
 
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
@@ -36,7 +37,6 @@ export class CustomTableComponent implements OnInit, OnChanges {
     if (this.tableConfig.pagination && !this.tableConfig.currentPage) {
       this.tableConfig.currentPage = 0;
     }
-    this.dataSource.data = this.data;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -44,6 +44,7 @@ export class CustomTableComponent implements OnInit, OnChanges {
       if (this.tableConfig.pagination && !this.tableConfig.totalItems) {
         this.tableConfig.totalItems = this.data.length;
       }
+      this.allData = this.data;
       this.updateData();
     }
   }
@@ -51,7 +52,7 @@ export class CustomTableComponent implements OnInit, OnChanges {
   updateData() {
     const startIndex = this.currentPage * this.tableConfig.pageSize;
     const endIndex = startIndex + this.tableConfig.pageSize;
-    this.dataSource.data = this.data.slice(startIndex, endIndex);
+    this.dataSource.data = this.allData.slice(startIndex, endIndex);
   }
 
   toggleCheckbox(row: any) {
@@ -83,7 +84,8 @@ export class CustomTableComponent implements OnInit, OnChanges {
 
   onScroll() {
     if (this.tableConfig.infiniteScroll) {
-      // Implement infinite scroll logic
+      const endIndex = this.dataSource.data.length + this.tableConfig.pageSize;
+      this.dataSource.data = this.allData.slice(0, endIndex);
     }
   }
 

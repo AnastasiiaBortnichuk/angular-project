@@ -1,4 +1,4 @@
-<div class="table-container" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="300" (scrolled)="onScroll()">
+<div class="table-container" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="300" (scrolled)="onScroll()" [scrollWindow]="false">
   <mat-table [dataSource]="dataSource" matSort>
 
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">

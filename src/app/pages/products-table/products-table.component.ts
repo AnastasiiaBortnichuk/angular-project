@@ -14,8 +14,8 @@ export class ProductsTableComponent implements OnInit, AfterViewInit {
 
   tableConfig: TableConfig = {
     sortableColumns: ['id', 'brand', 'name', 'price', 'product_type', 'image'],
-    pagination: true,
-    infiniteScroll: false,
+    pagination: false,
+    infiniteScroll: true,
     pageSize: 10,
     actionButtons: ['delete', 'update'],
   };
