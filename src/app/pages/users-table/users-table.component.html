@@ -1,1 +1,7 @@
-<app-custom-table [data]="data" [tableConfig]="tableConfig" [customCellTemplates]="customCellTemplates"></app-custom-table>
+<app-custom-table
+  [data]="data"
+  [tableConfig]="tableConfig"
+  [customCellTemplates]="customCellTemplates"
+  [deleteAction]="deleteSelected"
+  [updateAction]="updateUserAction">
+</app-custom-table>

@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TableConfig } from './table-config.model';
+import { Store, Action } from '@ngrx/store';
 
 @Component({
   selector: 'app-custom-table',
@@ -11,14 +12,14 @@ import { TableConfig } from './table-config.model';
   styleUrls: ['./custom-table.component.css']
 })
 export class CustomTableComponent implements OnInit, OnChanges {
-  @Input()
-  data: any[] = [];
-  @Input()
-  tableConfig!: TableConfig;
-  @Input()
-  customCellTemplates: { [key: string]: TemplateRef<any> } = {};
+  @Input() data: any[] = [];
+  @Input() tableConfig!: TableConfig;
+  @Input() customCellTemplates: { [key: string]: TemplateRef<any> } = {};
+  @Input() deleteAction!: () => void;
+  @Input() updateAction!: (item: any) => Action;
 
   displayedColumns: string[] = [];
+  displayedColumnsWithSelect: string[] = [];
   dataSource = new MatTableDataSource<any>(this.data);
   selection = new SelectionModel<any>(true, []);
   currentPage = 0;
@@ -27,11 +28,12 @@ export class CustomTableComponent implements OnInit, OnChanges {
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
-  constructor() {}
+  constructor(private store: Store) {}
 
   ngOnInit() {
     if (this.tableConfig) {
       this.displayedColumns = this.tableConfig.sortableColumns;
+      this.displayedColumnsWithSelect = ['select', ...this.displayedColumns];
     }
 
     if (this.tableConfig.pagination && !this.tableConfig.currentPage) {
@@ -70,11 +72,13 @@ export class CustomTableComponent implements OnInit, OnChanges {
   }
 
   deleteSelected() {
-    // Implement delete logic
+    this.deleteAction();
+    this.selection.clear();
   }
 
   updateSelected() {
-    // Implement update logic
+    const selectedItems = this.selection.selected;
+    this.store.dispatch(this.updateAction(selectedItems));
   }
 
   onPageChange(event: PageEvent) {
@@ -91,6 +95,10 @@ export class CustomTableComponent implements OnInit, OnChanges {
 
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  trackByFn(index: number, item: any) {
+    return item.id;
   }
 }
 

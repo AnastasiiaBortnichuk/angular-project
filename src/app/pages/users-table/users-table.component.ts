@@ -1,8 +1,12 @@
 import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
-import { UsersService } from '@app-services/users.service';
-import { MatTableDataSource } from '@angular/material/table';
+import { Store } from '@ngrx/store';
+import { loadUsers, deleteUser, updateUser } from '../../../state/actions/users.actions';
+import { selectAllUsers } from '../../../state/selectors/users.selectors';
+import { Observable } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { TableConfig } from 'src/app/custom-table/table-config.model';
+import { User } from 'src/state/models/user.model';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-users-table',
@@ -10,7 +14,9 @@ import { TableConfig } from 'src/app/custom-table/table-config.model';
   styleUrls: ['./users-table.component.css']
 })
 export class UsersTableComponent implements OnInit, AfterViewInit {
+  users$: Observable<User[]>;
   data: any[] = [];
+  selection = new SelectionModel<User>(true, []);
 
   tableConfig: TableConfig = {
     sortableColumns: ['id', 'name', 'username', 'email', 'address', 'phone'],
@@ -23,26 +29,48 @@ export class UsersTableComponent implements OnInit, AfterViewInit {
   @ViewChild('customCell', { static: true }) customCell!: TemplateRef<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   customCellTemplates: { [key: string]: TemplateRef<any> } = {};
-  dataSource = new MatTableDataSource<any>();
 
-  constructor(private usersService: UsersService) {};
+  constructor(private store: Store<{ users: User[] }>) {
+    this.users$ = this.store.select(selectAllUsers);
+  };
 
   ngOnInit() {
-    this.usersService.getAllUsers().subscribe((data) => {
-      this.data = data.map(user => ({
-        id: user.id,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        address: user.address,
-        phone: user.phone
-      }));
-    });
+    this.loadUsers();
+    this.subscribeToUsers();
   }
 
   ngAfterViewInit() {
     this.customCellTemplates = {
       address: this.customCell
     };
+  }
+
+  loadUsers() {
+    this.store.dispatch(loadUsers());
+  }
+
+  updateUserAction = (user: User) => updateUser({ user });
+
+  deleteSelected() {
+    const selectedIds = this.selection.selected.map(item => item.id);
+
+    selectedIds.forEach(id => {
+      this.store.dispatch(deleteUser({ id }));
+    });
+
+    this.selection.clear();
+
+    this.tableConfig.totalItems = this.data.length - selectedIds.length;
+  }
+
+  updateSelected() {
+    const selectedItems = this.selection.selected[0];
+    this.store.dispatch(this.updateUserAction(selectedItems));
+  }
+
+  private subscribeToUsers() {
+    this.users$.subscribe(users => {
+      this.data = users;
+    });
   }
 }

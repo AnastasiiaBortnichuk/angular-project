@@ -1,8 +1,12 @@
 import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
-import { ProductsService } from '@app-services/products.service';
-import { MatTableDataSource } from '@angular/material/table';
+import { Store } from '@ngrx/store';
+import { loadProducts,deleteProduct, updateProduct } from '../../../state/actions/products.actions';
+import { selectAllProducts } from '../../../state/selectors/products.selectors';
+import { Observable } from 'rxjs';
+import { Product } from '../../../state/models/product.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { TableConfig } from 'src/app/custom-table/table-config.model';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-products-table',
@@ -10,7 +14,9 @@ import { TableConfig } from 'src/app/custom-table/table-config.model';
   styleUrls: ['./products-table.component.css']
 })
 export class ProductsTableComponent implements OnInit, AfterViewInit {
+  products$: Observable<Product[]>;
   data: any[] = [];
+  selection = new SelectionModel<Product>(true, []);
 
   tableConfig: TableConfig = {
     sortableColumns: ['id', 'brand', 'name', 'price', 'product_type', 'image'],
@@ -23,27 +29,48 @@ export class ProductsTableComponent implements OnInit, AfterViewInit {
   @ViewChild('customCell', { static: true }) customCell!: TemplateRef<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   customCellTemplates: { [key: string]: TemplateRef<any> } = {};
-  dataSource = new MatTableDataSource<any>();
 
-  constructor(private productsService: ProductsService) {};
-
-  ngOnInit() {
-    this.productsService.getAllProducts().subscribe((data) => {
-      this.data = data.map(product => ({
-        id: product.id,
-        brand: product.brand,
-        name: product.name,
-        price: product.price,
-        product_type: product.product_type,
-        image: product.image_link
-      }));
-    });
+  constructor(private store: Store<{ products: Product[] }>) {
+    this.products$ = this.store.select(selectAllProducts);
   }
 
+  ngOnInit() {
+    this.loadProducts();
+    this.subscribeToProducts();
+  }
 
   ngAfterViewInit() {
     this.customCellTemplates = {
       address: this.customCell
     };
+  }
+
+  loadProducts() {
+    this.store.dispatch(loadProducts());
+  }
+
+  updateProductAction = (product: Product) => updateProduct({ product });
+
+  deleteSelected() {
+    const selectedIds = this.selection.selected.map(item => item.id);
+
+    selectedIds.forEach(id => {
+      this.store.dispatch(deleteProduct({ id }));
+    });
+
+    this.selection.clear();
+
+    this.tableConfig.totalItems = this.data.length - selectedIds.length;
+  }
+
+  updateSelected() {
+    const selectedItems = this.selection.selected[0];
+    this.store.dispatch(this.updateProductAction(selectedItems));
+  }
+
+  private subscribeToProducts() {
+    this.products$.subscribe(products => {
+      this.data = products;
+    })
   }
 }

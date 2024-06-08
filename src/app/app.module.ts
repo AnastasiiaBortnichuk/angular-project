@@ -1,6 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { productReducer } from '../state/reducers/products.reducers';
+import { userReducer } from '../state/reducers/users.reducers';
+import { ProductEffects } from '../state/effects/products.effects';
+import { UserEffects } from '../state/effects/users.effects';
+
 import { AppComponent } from './app.component';
 import { HeaderComponent } from '@app-components/header/header.component';
 import { HomeComponent } from '@app-pages/home/home.component';
@@ -75,7 +83,13 @@ import { AddressFormatterPipe } from './address-formatter.pipe';
     MatCheckboxModule,
     MatInputModule,
     MatButtonModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    StoreModule.forRoot({
+      products: productReducer,
+      users: userReducer
+    }),
+    EffectsModule.forRoot([ProductEffects, UserEffects]),
+    StoreDevtoolsModule.instrument({ maxAge: 25 })
   ],
   providers: [CartService, FavoritesService, ProductsService],
   bootstrap: [AppComponent]

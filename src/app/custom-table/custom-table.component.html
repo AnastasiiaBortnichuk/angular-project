@@ -1,9 +1,24 @@
 <div class="table-container" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="300" (scrolled)="onScroll()" [scrollWindow]="false">
   <mat-table [dataSource]="dataSource" matSort>
 
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? toggleCheckbox(row) : null" [checked]="selection.isSelected(row)"></mat-checkbox>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Dynamic Columns -->
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
-      <mat-cell *matCellDef="let element">
+      <mat-cell *matCellDef="let element; trackBy: trackByFn">
         <ng-container *ngIf="column !== 'image' && column !== 'address' && !customCellTemplates[column]">{{element[column]}}</ng-container>
         <ng-container *ngIf="column === 'address' && !customCellTemplates[column]">{{element[column] | addressFormatter}}</ng-container>
         <ng-container *ngIf="column === 'image'">
@@ -15,8 +30,8 @@
       </mat-cell>
     </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-header-row *matHeaderRowDef="displayedColumnsWithSelect"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumnsWithSelect;"></mat-row>
   </mat-table>
 
   <mat-paginator *ngIf="tableConfig.pagination" [length]="tableConfig.totalItems" [pageSize]="tableConfig.pageSize" [pageIndex]="currentPage" (page)="onPageChange($event)"></mat-paginator>
