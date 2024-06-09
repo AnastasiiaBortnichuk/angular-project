@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductsService } from '@app-services/products.service';
 import { API_STRING_MOCK, IProduct } from '@shared/types';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-category',
@@ -14,6 +15,7 @@ export class CategoryComponent implements OnInit {
   products: IProduct[] = [] as IProduct[];
   brands!: API_STRING_MOCK[];
   filteredProducts: IProduct[] = [];
+  private unsubscribe$ = new Subject<void>();
 
   constructor (
     private route: ActivatedRoute,
@@ -27,6 +29,7 @@ export class CategoryComponent implements OnInit {
     this.productType$ = productTypeFromRoute!;
 
     this.productsService.fetchData(this.productType$)
+    .pipe(takeUntil(this.unsubscribe$))
     .subscribe((products) => {
         this.products = products;
         this.brands = Array.from(
@@ -42,5 +45,10 @@ export class CategoryComponent implements OnInit {
 
   updateTitle(title: string): string {
     return title.replace(/_/g, ' ');
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

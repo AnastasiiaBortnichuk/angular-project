@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit, Inject } from
 import { Store } from '@ngrx/store';
 import { loadUsers, deleteUser, updateUser } from '../../../state/actions/users.actions';
 import { selectAllUsers } from '../../../state/selectors/users.selectors';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { TableConfig } from 'src/app/custom-table/table-config.model';
 import { User } from 'src/state/models/user.model';
@@ -28,6 +28,8 @@ export class UsersTableComponent implements OnInit, AfterViewInit {
   ) {
     this.users$ = this.store.select(selectAllUsers);
   };
+
+  private unsubscribe$ = new Subject<void>();
 
   ngOnInit() {
     this.loadUsers();
@@ -59,8 +61,15 @@ export class UsersTableComponent implements OnInit, AfterViewInit {
   }
 
   private subscribeToUsers() {
-    this.users$.subscribe(users => {
+    this.users$
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(users => {
       this.data = users;
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

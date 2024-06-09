@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CartService } from '@app-services/cart.service';
 import { CART_EMPTY, CART_TITLE } from '@shared/constants';
 import { IProduct } from '@shared/types';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
@@ -13,13 +14,16 @@ export class CartComponent implements OnInit {
   count: number = 0;
   cart: IProduct[] = [];
   title: string = CART_EMPTY;
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private cartService: CartService,
     ) {}
 
   ngOnInit() {
-    this.cartService.cart$.subscribe((cart) => {
+    this.cartService.cart$
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe((cart) => {
       this.cart = cart;
     })
 
@@ -42,5 +46,10 @@ export class CartComponent implements OnInit {
   handleClosePopup(): void {
     this.isPopupShown = false;
     console.log('handleClosePopup', this.isPopupShown)
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit, Inject } from
 import { Store } from '@ngrx/store';
 import { loadProducts,deleteProduct, updateProduct } from '../../../state/actions/products.actions';
 import { selectAllProducts } from '../../../state/selectors/products.selectors';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { Product } from '../../../state/models/product.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { TableConfig } from 'src/app/custom-table/table-config.model';
@@ -21,6 +21,7 @@ export class ProductsTableComponent implements OnInit, AfterViewInit {
   @ViewChild('customCell', { static: true }) customCell!: TemplateRef<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   customCellTemplates: { [key: string]: TemplateRef<any> } = {};
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private store: Store<{ products: Product[] }>,
@@ -59,8 +60,15 @@ export class ProductsTableComponent implements OnInit, AfterViewInit {
   }
 
   private subscribeToProducts() {
-    this.products$.subscribe(products => {
+    this.products$
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe(products => {
       this.data = products;
     })
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

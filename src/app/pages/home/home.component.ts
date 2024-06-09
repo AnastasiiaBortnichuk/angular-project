@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '@app-services/products.service';
 import { CATEGORIES } from '@shared/constants';
 import { IProduct } from '@shared/types';
-import { map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +13,7 @@ import { map } from 'rxjs/operators';
 export class HomeComponent implements OnInit {
   categories = CATEGORIES;
   types: string[] | undefined;
+  private unsubscribe$ = new Subject<void>();
 
   constructor (
     private productsService: ProductsService,
@@ -21,13 +23,20 @@ export class HomeComponent implements OnInit {
     this.productsService.getAllProducts().pipe(
       map(products => Array.from(
         new Set(products.map((product: IProduct) => product.product_type))
-      ))
-    ).subscribe(types => {
+      )),
+      takeUntil(this.unsubscribe$)
+    )
+    .subscribe(types => {
         this.types = types;
     });
   }
 
   updateTitle(title: string): string {
     return title.replace(/_/g, ' ');
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

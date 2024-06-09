@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '@app-services/products.service';
 import { IProduct } from '@shared/types';
+import { Subject, takeUntil } from 'rxjs';
 import { fetchProductProps } from 'src/app/utils/product-utils';
 
 const EYEBROW_PRODUCT = 'eyebrow';
@@ -12,6 +13,7 @@ const EYEBROW_PRODUCT = 'eyebrow';
 })
 export class BrowsComponent implements OnInit {
   products: IProduct[] = [] as IProduct[];
+  private unsubscribe$ = new Subject<void>();
 
   constructor (
     private productsService: ProductsService,
@@ -19,6 +21,7 @@ export class BrowsComponent implements OnInit {
 
   ngOnInit(): void {
     fetchProductProps([EYEBROW_PRODUCT], this.productsService)
+    .pipe(takeUntil(this.unsubscribe$))
     .subscribe({
       next: productProps => {
         this.products = productProps[EYEBROW_PRODUCT];
@@ -27,5 +30,10 @@ export class BrowsComponent implements OnInit {
         console.error('Error fetching product props:', err);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
