@@ -2,26 +2,29 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IProduct } from '@shared/types';
-import { environment as env } from './../../environments/environment.development';
+import { ConfigService } from './app-config.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ProductsService {
 
   constructor(
     private http: HttpClient,
+    private configService: ConfigService
   ) { }
 
   getAllProducts(): Observable<IProduct[]> {
-    return this.http.get<IProduct[]>(env.BASE_JSON_URL);
+    return this.http.get<IProduct[]>(this.configService.baseJsonUrl);
   }
 
   fetchData(param: string): Observable<IProduct[]> {
     const params = new HttpParams().set('product_type', param);
 
-    return this.http.get<IProduct[]>(env.BASE_JSON_URL, { params })
+    return this.http.get<IProduct[]>(this.configService.baseJsonUrl, { params })
   };
 
   getProductDetails(productId: number): Observable<IProduct> {
-    return this.http.get<IProduct>(`${env.BASE_URL}/${productId}.json`)
+    return this.http.get<IProduct>(`${this.configService.baseUrl}/${productId}.json`)
   };
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { loadUsers, deleteUser, updateUser } from '../../../state/actions/users.actions';
 import { selectAllUsers } from '../../../state/selectors/users.selectors';
@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { TableConfig } from 'src/app/custom-table/table-config.model';
 import { User } from 'src/state/models/user.model';
 import { SelectionModel } from '@angular/cdk/collections';
+import { USERS_TABLE_CONFIG_TOKEN } from 'src/app/app.tokens';
 
 @Component({
   selector: 'app-users-table',
@@ -17,19 +18,14 @@ export class UsersTableComponent implements OnInit, AfterViewInit {
   data: any[] = [];
   selection = new SelectionModel<User>(true, []);
 
-  tableConfig: TableConfig = {
-    sortableColumns: ['id', 'name', 'username', 'email', 'address', 'phone'],
-    pagination: true,
-    infiniteScroll: false,
-    pageSize: 10,
-    actionButtons: ['delete', 'update'],
-  };
-
   @ViewChild('customCell', { static: true }) customCell!: TemplateRef<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   customCellTemplates: { [key: string]: TemplateRef<any> } = {};
 
-  constructor(private store: Store<{ users: User[] }>) {
+  constructor(
+    private store: Store<{ users: User[] }>,
+    @Inject(USERS_TABLE_CONFIG_TOKEN) public tableConfig: TableConfig
+  ) {
     this.users$ = this.store.select(selectAllUsers);
   };
 

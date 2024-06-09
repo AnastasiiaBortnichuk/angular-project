@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { loadProducts,deleteProduct, updateProduct } from '../../../state/actions/products.actions';
 import { selectAllProducts } from '../../../state/selectors/products.selectors';
@@ -7,6 +7,7 @@ import { Product } from '../../../state/models/product.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { TableConfig } from 'src/app/custom-table/table-config.model';
 import { SelectionModel } from '@angular/cdk/collections';
+import { PRODUCTS_TABLE_CONFIG_TOKEN } from 'src/app/app.tokens';
 
 @Component({
   selector: 'app-products-table',
@@ -17,19 +18,14 @@ export class ProductsTableComponent implements OnInit, AfterViewInit {
   data: any[] = [];
   selection = new SelectionModel<Product>(true, []);
 
-  tableConfig: TableConfig = {
-    sortableColumns: ['id', 'brand', 'name', 'price', 'product_type', 'image'],
-    pagination: false,
-    infiniteScroll: true,
-    pageSize: 10,
-    actionButtons: ['delete', 'update'],
-  };
-
   @ViewChild('customCell', { static: true }) customCell!: TemplateRef<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   customCellTemplates: { [key: string]: TemplateRef<any> } = {};
 
-  constructor(private store: Store<{ products: Product[] }>) {
+  constructor(
+    private store: Store<{ products: Product[] }>,
+    @Inject(PRODUCTS_TABLE_CONFIG_TOKEN) public tableConfig: TableConfig
+  ) {
     this.products$ = this.store.select(selectAllProducts);
   }
 

@@ -45,7 +45,9 @@ import { ProductsTableComponent } from './pages/products-table/products-table.co
 import { UsersTableComponent } from './pages/users-table/users-table.component';
 import { AddressFormatterPipe } from './address-formatter.pipe';
 import { FormsModule } from '@angular/forms';
-
+import { USERS_TABLE_CONFIG_TOKEN, PRODUCTS_TABLE_CONFIG_TOKEN, ConfigService} from './app.tokens';
+import { AppConfigModule } from './app-config.module';
+import { environment } from './../environments/environment.development';
 
 @NgModule({
   declarations: [
@@ -91,9 +93,28 @@ import { FormsModule } from '@angular/forms';
       users: userReducer
     }),
     EffectsModule.forRoot([ProductEffects, UserEffects]),
-    StoreDevtoolsModule.instrument({ maxAge: 25 })
+    StoreDevtoolsModule.instrument({ maxAge: 25 }),
+    AppConfigModule.forRoot({
+      BASE_URL: environment.BASE_URL,
+      USERS_URL: environment.USERS_URL,
+      BASE_JSON_URL: environment.BASE_JSON_URL,
+    })
   ],
-  providers: [CartService, FavoritesService, ProductsService],
+  providers: [
+    CartService,
+    FavoritesService,
+    ProductsService,
+    {
+      provide: USERS_TABLE_CONFIG_TOKEN,
+      useFactory: (configService: ConfigService) => configService.getUsersTableConfig(),
+      deps: [ConfigService]
+    },
+    {
+      provide: PRODUCTS_TABLE_CONFIG_TOKEN,
+      useFactory: (configService: ConfigService) => configService.getProductsTableConfig(),
+      deps: [ConfigService]
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
