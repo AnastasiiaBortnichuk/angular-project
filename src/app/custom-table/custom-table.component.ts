@@ -9,7 +9,7 @@ import { Store, Action } from '@ngrx/store';
 @Component({
   selector: 'app-custom-table',
   templateUrl: './custom-table.component.html',
-  styleUrls: ['./custom-table.component.css']
+  styleUrls: ['../../styles/custom-table.scss']
 })
 export class CustomTableComponent implements OnInit, OnChanges {
   @Input() data: any[] = [];
@@ -24,6 +24,8 @@ export class CustomTableComponent implements OnInit, OnChanges {
   selection = new SelectionModel<any>(true, []);
   currentPage = 0;
   private allData: any[] = [];
+  editingRowIndex: number | null = null;
+  editingRow: any;
 
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
@@ -99,6 +101,68 @@ export class CustomTableComponent implements OnInit, OnChanges {
 
   trackByFn(index: number, item: any) {
     return item.id;
+  }
+
+  deepCopy(obj: any): any {
+    if (typeof obj !== 'object' || obj === null) {
+        return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.deepCopy(item));
+    }
+
+    return Object.fromEntries(
+        Object.entries(obj).map(([key, value]) => [key, this.deepCopy(value)])
+    );
+}
+
+startEditing(rowIndex: number) {
+  if (this.editingRowIndex !== rowIndex) {
+    this.editingRowIndex = rowIndex;
+    const selectedRow = this.data.find(row => row.id === rowIndex);
+    this.editingRow = this.deepCopy(selectedRow);
+  }
+}
+
+onInputChange(event: any, column: string, subKey?: string) {
+  if (subKey) {
+    this.editingRow[column][subKey] = event;
+  } else {
+    this.editingRow[column] = event;
+  }
+}
+
+saveEditing(row: any) {
+    this.store.dispatch(this.updateAction(row));
+    this.editingRowIndex = null;
+
+    const dataSourceData = this.dataSource.data;
+    const index = dataSourceData.findIndex(item => item.id === row.id);
+
+    if (index !== -1) {
+        dataSourceData[index] = this.deepCopy(row);
+        this.dataSource.data = [...dataSourceData];
+    }
+}
+
+  getCurrentEditingRow() {
+    return this.dataSource.data.find(row => row.id === this.editingRowIndex);
+  }
+
+  getAddressKeys(address: any): string[] {
+    return address ? Object.keys(address) : [];
+  }
+
+  onFileSelected(event: any, element: any, column: string) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        element[column] = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }
 

@@ -1,31 +1,48 @@
 <div class="table-container" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="300" (scrolled)="onScroll()" [scrollWindow]="false">
-  <mat-table [dataSource]="dataSource" matSort>
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef>
+      <mat-header-cell *matHeaderCellDef class="select-column">
         <mat-checkbox
           (change)="$event ? masterToggle() : null"
           [checked]="selection.hasValue() && isAllSelected()"
           [indeterminate]="selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">
+      <mat-cell *matCellDef="let row" class="select-column">
         <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? toggleCheckbox(row) : null" [checked]="selection.isSelected(row)"></mat-checkbox>
       </mat-cell>
     </ng-container>
 
     <!-- Dynamic Columns -->
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
-      <mat-cell *matCellDef="let element; trackBy: trackByFn">
-        <ng-container *ngIf="column !== 'image' && column !== 'address' && !customCellTemplates[column]">{{element[column]}}</ng-container>
-        <ng-container *ngIf="column === 'address' && !customCellTemplates[column]">{{element[column] | addressFormatter}}</ng-container>
-        <ng-container *ngIf="column === 'image'">
-          <img [src]="element[column]" alt="Product Image" width="50">
+      <mat-header-cell *matHeaderCellDef mat-sort-header [ngClass]="column"> {{column}} </mat-header-cell>
+      <mat-cell *matCellDef="let element; trackBy: trackByFn" [ngClass]="column" (click)="startEditing(element.id)">
+        <ng-container *ngIf="editingRowIndex === element.id">
+          <ng-container *ngIf="column !== 'image' && column !== 'address'">
+            <input [(ngModel)]="editingRow[column]"  (ngModelChange)="onInputChange($event, column)" class="input" />
+          </ng-container>
+          <ng-container *ngIf="column === 'address'">
+            <div *ngFor="let key of getAddressKeys(element[column])" >
+              <label>{{key}}:</label>
+              <input [(ngModel)]="editingRow[column][key]" (ngModelChange)="onInputChange($event, column, key)" class="input" />
+            </div>
+          </ng-container>
+          <ng-container *ngIf="column === 'image'">
+            <input type="file" (change)="onFileSelected($event, editingRow, column)" />
+            <img [src]="element[column]" alt="Product Image" width="50">
+          </ng-container>
         </ng-container>
-        <ng-container *ngIf="customCellTemplates[column]">
-          <ng-template [ngTemplateOutlet]="customCellTemplates[column]" [ngTemplateOutletContext]="{ $implicit: element }"></ng-template>
+        <ng-container *ngIf="editingRowIndex !== element.id">
+          <ng-container *ngIf="column !== 'image' && column !== 'address' && !customCellTemplates[column]">{{element[column]}}</ng-container>
+          <ng-container *ngIf="column === 'address' && !customCellTemplates[column]">{{element[column] | addressFormatter}}</ng-container>
+          <ng-container *ngIf="column === 'image'">
+            <img [src]="element[column]" alt="Product Image" width="50">
+          </ng-container>
+          <ng-container *ngIf="customCellTemplates[column]">
+            <ng-template [ngTemplateOutlet]="customCellTemplates[column]" [ngTemplateOutletContext]="{ $implicit: element }"></ng-template>
+          </ng-container>
         </ng-container>
       </mat-cell>
     </ng-container>
@@ -38,7 +55,7 @@
 </div>
 
 <div class="action-bar">
-  <button *ngIf="tableConfig.actionButtons.includes('delete')" (click)="deleteSelected()">Delete</button>
-  <button *ngIf="tableConfig.actionButtons.includes('update')" (click)="updateSelected()">Update</button>
+  <button *ngIf="tableConfig.actionButtons.includes('delete')" (click)="deleteSelected()" class="button">Delete</button>
+  <button *ngIf="tableConfig.actionButtons.includes('update') && editingRowIndex !== null" (click)="saveEditing(editingRow)" class="button">Update</button>
 </div>
 

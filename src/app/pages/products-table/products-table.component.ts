@@ -10,8 +10,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-products-table',
-  templateUrl: './products-table.component.html',
-  styleUrls: ['./products-table.component.css']
+  templateUrl: './products-table.component.html'
 })
 export class ProductsTableComponent implements OnInit, AfterViewInit {
   products$: Observable<Product[]>;
@@ -61,11 +60,6 @@ export class ProductsTableComponent implements OnInit, AfterViewInit {
     this.selection.clear();
 
     this.tableConfig.totalItems = this.data.length - selectedIds.length;
-  }
-
-  updateSelected() {
-    const selectedItems = this.selection.selected[0];
-    this.store.dispatch(this.updateProductAction(selectedItems));
   }
 
   private subscribeToProducts() {

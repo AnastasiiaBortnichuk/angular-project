@@ -10,8 +10,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-users-table',
-  templateUrl: './users-table.component.html',
-  styleUrls: ['./users-table.component.css']
+  templateUrl: './users-table.component.html'
 })
 export class UsersTableComponent implements OnInit, AfterViewInit {
   users$: Observable<User[]>;
@@ -61,11 +60,6 @@ export class UsersTableComponent implements OnInit, AfterViewInit {
     this.selection.clear();
 
     this.tableConfig.totalItems = this.data.length - selectedIds.length;
-  }
-
-  updateSelected() {
-    const selectedItems = this.selection.selected[0];
-    this.store.dispatch(this.updateUserAction(selectedItems));
   }
 
   private subscribeToUsers() {

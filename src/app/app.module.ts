@@ -44,6 +44,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ProductsTableComponent } from './pages/products-table/products-table.component';
 import { UsersTableComponent } from './pages/users-table/users-table.component';
 import { AddressFormatterPipe } from './address-formatter.pipe';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -84,6 +85,7 @@ import { AddressFormatterPipe } from './address-formatter.pipe';
     MatInputModule,
     MatButtonModule,
     InfiniteScrollModule,
+    FormsModule,
     StoreModule.forRoot({
       products: productReducer,
       users: userReducer
