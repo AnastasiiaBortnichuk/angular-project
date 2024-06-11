@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { forkJoin, from } from 'rxjs';
 import { ProductsService } from '@app-services/products.service';
 import { IProduct, ProductTypes } from '@shared/types';
+import { Subject, takeUntil } from 'rxjs';
+import { fetchProductProps } from 'src/app/utils/product-utils';
 
 const FACE_PRODUCTS = ['blush', 'bronzer', 'foundation'];
 
@@ -12,21 +13,27 @@ const FACE_PRODUCTS = ['blush', 'bronzer', 'foundation'];
 export class FaceComponent implements OnInit {
   products: ProductTypes[] = FACE_PRODUCTS as ProductTypes[];
   productProps: Record<ProductTypes, IProduct[]> = {} as Record<ProductTypes, IProduct[]>;
+  private unsubscribe$ = new Subject<void>();
 
   constructor (
     private productsService: ProductsService,
   ) {}
 
   ngOnInit(): void {
-    forkJoin(
-      this.products.map(product =>
-        from(this.productsService.fetchData(product))
-      )
-    ).subscribe(results => {
-      results.forEach((products, index) => {
-        const productType = this.products[index] as ProductTypes;;
-        this.productProps[productType] = products;
-      });
+    fetchProductProps(this.products, this.productsService)
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe({
+      next: productProps => {
+        this.productProps = productProps as Record<ProductTypes, IProduct[]>;
+      },
+      error: err => {
+        console.error('Error fetching product props:', err);
+      }
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
