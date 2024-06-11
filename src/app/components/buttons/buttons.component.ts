@@ -4,6 +4,7 @@ import { FavoritesService } from '@app-services/favorites.service';
 import { CART_ADDED, CART_ADD_TO, EMPTY_HEART, FILLED_HEART } from '@shared/constants';
 import { isAdded } from '@shared/helpers';
 import { IProduct } from '@shared/types';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-buttons',
@@ -14,9 +15,10 @@ export class ButtonsComponent {
   @Input() product!: IProduct;
 
   public isAddedToCart: boolean = false;
-  private isInFavorites: boolean = false;
+  public isInFavorites: boolean = false;
   public buttonTitle: string = CART_ADD_TO;
   public heartIcon: string = EMPTY_HEART;
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private cartService: CartService,
@@ -25,12 +27,16 @@ export class ButtonsComponent {
 
   ngOnInit(): void {
     // Access cart data
-    this.cartService.cart$.subscribe((cart) => {
+    this.cartService.cart$
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe((cart) => {
       this.isAddedToCart = isAdded(cart, this.product.id);
       this.buttonTitle = this.isAddedToCart ? CART_ADDED : CART_ADD_TO;
     });
     // Access favorites data
-    this.favoritesService.favorites$.subscribe((favorites) => {
+    this.favoritesService.favorites$
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe((favorites) => {
       this.isInFavorites = isAdded(favorites, this.product.id);
       this.heartIcon = this.isInFavorites ? FILLED_HEART : EMPTY_HEART;
     });
@@ -46,5 +52,10 @@ export class ButtonsComponent {
 
   handleSetFavorites(product: IProduct) {
     this.favoritesService.setFavorites(product);
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
