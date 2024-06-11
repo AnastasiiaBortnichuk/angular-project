@@ -30,8 +30,13 @@
             </div>
           </ng-container>
           <ng-container *ngIf="column === 'image'">
-            <input type="file" (change)="onFileSelected($event, editingRow, column)" />
-            <img [src]="element[column]" alt="Product Image" width="50">
+            <div class="uploader-container">
+              <div appUpload (onFileDropped)="uploadFile($event)" class="file-uploader">
+                Drop a file here
+              </div>
+              <input type="file" (change)="onFileSelected($event, editingRow, column)" [disabled]="fileUploaded" />
+              <img [src]="element[column]" alt="Product Image" width="50">
+            </div>
           </ng-container>
         </ng-container>
         <ng-container *ngIf="editingRowIndex !== element.id">

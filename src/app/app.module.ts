@@ -48,6 +48,7 @@ import { FormsModule } from '@angular/forms';
 import { USERS_TABLE_CONFIG_TOKEN, PRODUCTS_TABLE_CONFIG_TOKEN, ConfigService} from './app.tokens';
 import { AppConfigModule } from './app-config.module';
 import { environment } from './../environments/environment.development';
+import { UploadDirective } from './app-upload.directive';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { environment } from './../environments/environment.development';
     CustomTableComponent,
     ProductsTableComponent,
     UsersTableComponent,
-    AddressFormatterPipe
+    AddressFormatterPipe,
+    UploadDirective
   ],
   imports: [
     BrowserModule,

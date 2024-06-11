@@ -54,3 +54,17 @@ mat-cell.address {
     transition: all 1s;
   }
 }
+
+.uploader-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-uploader {
+  position: relative;
+  margin: 10px 0;
+  width: 200px;
+  height: 110px;
+  padding: 20px;
+  border: 1px solid #e2a1ca;
+}

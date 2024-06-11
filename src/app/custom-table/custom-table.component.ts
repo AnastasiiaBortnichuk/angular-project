@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, TemplateRef, OnChanges, SimpleChanges  } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, TemplateRef, OnChanges, SimpleChanges, OnDestroy  } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -26,6 +26,7 @@ export class CustomTableComponent implements OnInit, OnChanges {
   private allData: any[] = [];
   editingRowIndex: number | null = null;
   editingRow: any;
+  fileUploaded: boolean = false;
 
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
@@ -99,10 +100,6 @@ export class CustomTableComponent implements OnInit, OnChanges {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  trackByFn(index: number, item: any) {
-    return item.id;
-  }
-
   deepCopy(obj: any): any {
     if (typeof obj !== 'object' || obj === null) {
         return obj;
@@ -154,15 +151,34 @@ saveEditing(row: any) {
     return address ? Object.keys(address) : [];
   }
 
-  onFileSelected(event: any, element: any, column: string) {
-    const file = event.target.files[0];
-    if (file) {
+  onFileSelected(event: Event, editingRow: any, column: string) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
       const reader = new FileReader();
-      reader.onload = (e: any) => {
-        element[column] = e.target.result;
+      reader.onload = () => {
+        editingRow[column] = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  uploadFile(files: FileList) {
+    if (files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (this.editingRow) {
+          this.editingRow['image'] = reader.result as string;
+          this.fileUploaded = true;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  trackByFn(index: number, item: any) {
+    return item.id;
   }
 }
 
